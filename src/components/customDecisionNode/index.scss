@@ -1,0 +1,34 @@
+.customDecisionNode {
+  height: 70px;
+  width: 70px;
+  background: transparent;
+  position: relative;
+
+  &-background {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 56px;
+    height: 56px;
+    transform: rotate(45deg);
+    border: 1px solid #505050;
+    background-color: #333333;
+    border-radius: 8px;
+
+    &:hover {
+      border: 1px solid #618bf6;
+    }
+  }
+  &-content {
+    font-size: 14px;
+    overflow: hidden;
+    white-space: nowrap;
+    line-height: 70px;
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    color: #fff;
+    text-align: center;
+    text-overflow: ellipsis;
+  }
+}
