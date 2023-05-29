@@ -1,28 +1,18 @@
-import { NodeCustomEnum } from "@/types/customNodes";
 import CustomNodeWrapper from "../customNodeWrapper";
-import { Position, Handle } from "reactflow";
+import { Position, NodeProps } from "reactflow";
 import "./index.scss";
 
-const CustomDecisionNode = (props) => {
-  const { isConnectable, data } = props;
+const CustomDecisionNode = (props: NodeProps) => {
+  const { data } = props;
   return (
-    <CustomNodeWrapper className="customDecisionNode">
-      <Handle
-        type="target"
-        className="customHandle"
-        position={Position.Top}
-        isConnectable={isConnectable}
-        id={NodeCustomEnum.DECISION}
-      />
+    <CustomNodeWrapper
+      {...props}
+      className="customDecisionNode"
+      handles={[Position.Bottom, Position.Top]}
+      addonBtns={[]}
+    >
       <div className="customDecisionNode-background"></div>
       <div className="customDecisionNode-content">{data.label}</div>
-      <Handle
-        type="source"
-        className="customHandle"
-        position={Position.Bottom}
-        isConnectable={isConnectable}
-        id={NodeCustomEnum.DECISION}
-      />
     </CustomNodeWrapper>
   );
 };

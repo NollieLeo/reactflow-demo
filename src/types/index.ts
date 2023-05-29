@@ -13,7 +13,7 @@ interface CustomEdgeData {
     name: "motherfucker";
 }
 
-type BasicNodeType = Node<CustomNodeData, NodeCustomEnum>
+type BasicNodeType = Node<CustomNodeData, NodeCustomEnum | string>
 
 type BasicEdgeType = Edge
 

@@ -1,18 +1,16 @@
-import { useCallback } from "react";
-import { Handle, Position } from "reactflow";
+import { NodeProps, Position } from "reactflow";
 import "./index.scss";
 import CustomNodeWrapper from "../customNodeWrapper";
 
-function CustomEndNode(props) {
-  const { isConnectable } = props;
+function CustomEndNode(props: NodeProps) {
   return (
-    <CustomNodeWrapper className="customEndNode">
+    <CustomNodeWrapper
+      {...props}
+      handles={[Position.Top]}
+      addonBtns={[]}
+      className="customEndNode"
+    >
       <span>结束</span>
-      <Handle
-        type="target"
-        position={Position.Top}
-        isConnectable={isConnectable}
-      />
     </CustomNodeWrapper>
   );
 }

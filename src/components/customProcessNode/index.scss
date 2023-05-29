@@ -1,12 +1,13 @@
 .customProcessNode {
-  height: 56px;
-  width: 128px;
+  height: 40px;
+  width: 80px;
   border-radius: 8px;
-  // line-height: 56px;
+  line-height: 40px;
   border: 1px solid #505050;
   background-color: #333333;
   color: #fff;
   text-align: center;
+  font-size: 14px;
   &:hover {
     border: 1px solid #618bf6;
   }

@@ -1,4 +1,15 @@
-
 .customNodeWrapper {
-
+  position: relative;
+  &:hover {
+    .nodeAddonBtn {
+      display: block;
+    }
+  }
+  .nodeAddonBtn {
+    position: absolute;
+    margin: auto;
+    // inset: 0;
+    z-index: 999;
+    display: none;
+  }
 }

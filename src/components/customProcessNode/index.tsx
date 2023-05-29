@@ -1,27 +1,13 @@
 import { NodeCustomEnum } from "@/types/customNodes";
 import CustomNodeWrapper from "../customNodeWrapper";
-import { Position, Handle } from "reactflow";
+import { Position, Handle, NodeProps } from "reactflow";
 import "./index.scss";
 
-const CustomProcessNode = (props) => {
-  const { isConnectable, data } = props;
+const CustomProcessNode = (props: NodeProps) => {
+  const { data } = props;
   return (
-    <CustomNodeWrapper className="customProcessNode">
-      <Handle
-        type="target"
-        className="customHandle"
-        position={Position.Top}
-        isConnectable={isConnectable}
-        id={NodeCustomEnum.PROCESS}
-      />
+    <CustomNodeWrapper className="customProcessNode" {...props}>
       <div>{data.label}</div>
-      <Handle
-        type="source"
-        className="customHandle"
-        position={Position.Bottom}
-        isConnectable={isConnectable}
-        id={NodeCustomEnum.PROCESS}
-      />
     </CustomNodeWrapper>
   );
 };

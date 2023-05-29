@@ -1,8 +1,11 @@
 .customDecisionNode {
   height: 70px;
-  width: 70px;
+  width: 80px;
   background: transparent;
   position: relative;
+  .react-flow__handle {
+    z-index: 2;
+  }
 
   &-background {
     position: absolute;

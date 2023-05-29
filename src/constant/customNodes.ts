@@ -24,17 +24,17 @@ const CUSTOM_NODE_BASIC_TYPE_MAP: Record<NodeCustomEnum, Partial<BasicNodeType>>
     },
     [NodeCustomEnum.END]: {
         ...BASIC_NODE_TYPE_DATA,
-        width: 60,
+        width: 80,
         height: 36,
     },
     [NodeCustomEnum.PROCESS]: {
         ...BASIC_NODE_TYPE_DATA,
-        width: 128,
-        height: 56,
+        width: 80,
+        height: 40,
     },
     [NodeCustomEnum.DECISION]: {
         ...BASIC_NODE_TYPE_DATA,
-        width: 70,
+        width: 80,
         height: 70,
     }
 }

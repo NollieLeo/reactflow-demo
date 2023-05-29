@@ -1,20 +1,16 @@
-import { Handle, Position } from "reactflow";
+import { NodeProps, Position } from "reactflow";
 import "./index.scss";
 import CustomNodeWrapper from "../customNodeWrapper";
-import { NodeCustomEnum } from "../../types/customNodes";
 
-function CustomStartNode(props) {
-  const { isConnectable } = props;
+function CustomStartNode(props: NodeProps) {
   return (
-    <CustomNodeWrapper className="customStartNode">
+    <CustomNodeWrapper
+      {...props}
+      className="customStartNode"
+      handles={[Position.Bottom]}
+      addonBtns={[Position.Bottom]}
+    >
       <div>开始节点</div>
-      <Handle
-        type="source"
-        className="customHandle"
-        position={Position.Bottom}
-        isConnectable={isConnectable}
-        id={NodeCustomEnum.START}
-      />
     </CustomNodeWrapper>
   );
 }

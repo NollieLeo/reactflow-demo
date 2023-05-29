@@ -8,45 +8,85 @@ import ReactFlow, {
   getIncomers,
   getOutgoers,
   getConnectedEdges,
+  applyNodeChanges,
+  EdgeChange,
+  applyEdgeChanges,
+  useReactFlow,
+  MarkerType,
+  NodeMouseHandler,
+  OnNodesChange,
+  OnEdgesChange,
+  NodeChange,
 } from "reactflow";
-import { useCallback, useEffect, useMemo } from "react";
+import uniqid from "uniqid";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  DragEventHandler,
+  DragEvent,
+  MouseEvent,
+} from "react";
 import "reactflow/dist/style.css";
-import { Button } from "antd";
+import { Button, Modal } from "antd";
 import { CUSTOM_NODE_TYPES } from "@/constant/customNodes";
 import { CUSTOM_EDGE_TYPES } from "@/constant/customEdges";
-import getLayoutedElements from "@/utils/getLayoutElements";
 import { useEventsFlowContext } from "./stores";
+import useAutoLayout from "@/hooks/useAutoLayout";
+import { initialEdges, initialNodes } from "@/mocks";
+import { BasicEdgeType, BasicNodeType } from "@/types";
+import "./index.scss";
 import { NodeCustomEnum } from "@/types/customNodes";
 
+const defaultEdgeOptions = {
+  type: "smoothstep",
+  markerEnd: { type: MarkerType.ArrowClosed },
+  pathOptions: { offset: 10 },
+};
+
+const proOptions = {
+  account: "wengweng",
+  hideAttribution: true,
+};
+
 export default function App() {
-  const {
-    value,
-    store,
-    edges: layoutedEdges,
-    nodes: layoutedNodes,
-  } = useEventsFlowContext();
+  // this hook handles the computation of the layout once the elements or the direction changes
+  const { fitView } = useReactFlow();
+  const { edges, nodes, setEdges, setNodes, onUpdateNode } =
+    useEventsFlowContext();
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(layoutedNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(layoutedEdges);
+  useAutoLayout({ direction: "TB" });
 
-  const onConnect = useCallback(
-    (params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges]
-  );
+  const [selectedNode, setSelectedNode] = useState<BasicNodeType>();
 
-  const nodeTypes = useMemo(() => CUSTOM_NODE_TYPES, []);
-  const edgeTypes = useMemo(() => CUSTOM_EDGE_TYPES, []);
+  // this function is called once the node from the sidebar is dropped onto a node in the current graph
+  const onDrop: DragEventHandler = (evt: DragEvent<HTMLDivElement>) => {
+    // make sure that the event target is a DOM element
+    // if (evt.target instanceof Element) {
+    //   // from the target element search for the node wrapper element which has the node id as attribute
+    //   const targetId = evt.target
+    //     .closest(".react-flow__node")
+    //     ?.getAttribute("data-id");
+    //   if (targetId) {
+    //     // now we can create a connection to the drop target node
+    //     onAddNodes(targetId);
+    //   }
+    // }
+  };
 
-  const onLayout = useCallback(
-    (newNodes = nodes, newEdges = edges, direction?: string) => {
-      const { nodes: layoutedNodes, edges: layoutedEdges } =
-        getLayoutedElements(newNodes, newEdges, direction);
+  const onNodesChange: OnNodesChange = (changes: NodeChange[]) => {
+    setNodes((nodes) => applyNodeChanges(changes, nodes));
+  };
 
-      setNodes([...layoutedNodes]);
-      setEdges([...layoutedEdges]);
-    },
-    [nodes, edges]
-  );
+  const onEdgesChange: OnEdgesChange = (changes: EdgeChange[]) => {
+    setEdges((edges) => applyEdgeChanges(changes, edges));
+  };
+
+  // every time  nodes change, we want to center the graph again
+  useEffect(() => {
+    fitView({ duration: 400 });
+  }, [nodes, fitView]);
 
   const onNodesDelete = useCallback(
     (deleted) => {
@@ -67,7 +107,7 @@ export default function App() {
                   sourceType !== NodeCustomEnum.START
                 ) {
                   return {
-                    id: `${source}->${target}`,
+                    id: uniqid.process(),
                     source,
                     target,
                     type: "smoothstep",
@@ -79,48 +119,68 @@ export default function App() {
         );
         return [...remainingEdges, ...createdEdges];
       }, edges);
-      onLayout([...nodes], newEdges);
+      setEdges(newEdges);
     },
     [nodes, edges]
   );
 
+  // this function is called when a node in the graph is clicked
+  const onNodeClick: NodeMouseHandler = (
+    _: MouseEvent,
+    node: BasicNodeType
+  ) => {
+    if (node) {
+      setSelectedNode(node);
+    }
+    // on click, we want to add create a new node connection the clicked node
+    // onAddNodes(node.id);
+  };
+
   return (
-    <div style={{ width: "100vw", height: "100vh" }}>
+    <div className="events-flow">
       <Button>添加</Button>
-      <ReactFlowProvider>
-        <ReactFlow
-          nodes={nodes}
-          nodeTypes={nodeTypes}
-          edgeTypes={edgeTypes}
-          edges={edges}
-          onNodesDelete={onNodesDelete}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          fitView
-          defaultEdgeOptions={{
-            labelBgBorderRadius:8
-          }}
-          // fitViewOptions={{
-          //   padding: 100,
-          // }}
-          style={{
-            background: "#202020",
-          }}
-          //   defaultViewport={{
-          //     x: 200,
-          //     zoom: 1,
-          //     y: 200,
-          //   }}
-          //   minZoom={0.2}
-          //   maxZoom={2}
-        >
-          {/* <Controls />
+      <Modal
+        open={!!selectedNode}
+        onCancel={() => setSelectedNode(undefined)}
+        onOk={() => {
+          onUpdateNode(selectedNode?.id, {
+            data: {
+              label: "Motherfucker",
+            },
+          });
+          setSelectedNode(undefined);
+        }}
+      >
+        随便改个node
+      </Modal>
+      <ReactFlow
+        fitView
+        proOptions={proOptions}
+        defaultEdgeOptions={defaultEdgeOptions}
+        nodeTypes={CUSTOM_NODE_TYPES}
+        edgeTypes={CUSTOM_EDGE_TYPES}
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onDrop={onDrop}
+        onNodeClick={onNodeClick}
+        onNodesDelete={onNodesDelete}
+        // onNodeMouseEnter={onNodeMouseEnter}
+        // onNodeMouseLeave={() => setHoveredNode(undefined)}
+        // newly added edges get these options automatically
+        minZoom={-Infinity}
+        maxZoom={Infinity}
+        style={{
+          background: "#202020",
+        }}
+      >
+        {/* <Controls />
           <NodeToolbar />
           <MiniMap /> */}
-          {/* <Background gap={12} size={1} /> */}
-        </ReactFlow>
-      </ReactFlowProvider>
+        {/* <Background gap={12} size={1} /> */}
+        {/* {renderAddBtnByHoveredNodePosition()} */}
+      </ReactFlow>
     </div>
   );
 }

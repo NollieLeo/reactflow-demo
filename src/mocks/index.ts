@@ -1,6 +1,6 @@
 import { NodeCustomEnum } from "@/types/customNodes";
 import { EdgeCustomEnum } from "../types/customEdges";
-import { BasicNodeType } from "@/types";
+import { BasicEdgeType, BasicNodeType } from "@/types";
 import { CUSTOM_NODE_BASIC_TYPE_MAP } from "@/constant/customNodes";
 
 const position = { x: 0, y: 0 };
@@ -9,43 +9,43 @@ export const initialNodes: BasicNodeType[] = [
     {
         id: "1",
         type: NodeCustomEnum.START,
-        data: { label: "Request PTO", },
+        data: { label: "Stupid", },
         position,
     },
     {
         id: "2",
         type: NodeCustomEnum.PROCESS,
-        data: { label: "manager reviews data" },
+        data: { label: "Stupid2" },
         position,
     },
     {
         id: "3",
         type: NodeCustomEnum.DECISION,
-        data: { label: "Pending manager approval" },
+        data: { label: "Stupid3" },
         position,
     },
     {
         id: "4",
         type: NodeCustomEnum.PROCESS,
-        data: { label: "PTO request approved" },
+        data: { label: "Stupid4" },
         position,
     },
     {
         id: "5",
         type: NodeCustomEnum.PROCESS,
-        data: { label: "PTO request denied" },
+        data: { label: "Stupid5" },
         position,
     },
     {
         id: "6",
         type: NodeCustomEnum.PROCESS,
-        data: { label: "Notify teammate1" },
+        data: { label: "Stupid6" },
         position,
     },
     {
         id: "7",
         type: NodeCustomEnum.PROCESS,
-        data: { label: "Notify teammate2" },
+        data: { label: "Stupid7" },
         position,
     },
     {
@@ -56,7 +56,7 @@ export const initialNodes: BasicNodeType[] = [
     }
 ];
 
-export const initialEdges = [
+export const initialEdges: BasicEdgeType[] = [
     {
         id: "e1-2",
         source: "1",
@@ -68,20 +68,20 @@ export const initialEdges = [
         source: "2",
         target: "3",
         type: 'smoothstep'
-
     },
     {
         id: "e3-4",
         source: "3",
         target: "4",
-        type: 'smoothstep'
-
+        type: 'smoothstep',
+        sourceHandle: 'left'
     },
     {
         id: "e3-5",
         source: "3",
         target: "5",
-        type: 'smoothstep'
+        type: 'smoothstep',
+        sourceHandle: 'right'
 
     },
     {
