@@ -22,7 +22,6 @@ import uniqid from "uniqid";
 import {
   useCallback,
   useEffect,
-  useMemo,
   useState,
   DragEventHandler,
   DragEvent,
@@ -70,7 +69,7 @@ export default function App() {
     //     ?.getAttribute("data-id");
     //   if (targetId) {
     //     // now we can create a connection to the drop target node
-    //     onAddNodes(targetId);
+    //     onAddAction(targetId);
     //   }
     // }
   };
@@ -133,7 +132,7 @@ export default function App() {
       // setSelectedNode(node);
     }
     // on click, we want to add create a new node connection the clicked node
-    // onAddNodes(node.id);
+    // onAddAction(node.id);
   };
 
   return (

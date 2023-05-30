@@ -6,5 +6,4 @@ export enum NodeCustomEnum {
     PROCESS = 'customProcessNode',
     DECISION = 'customDecisionNode',
     EMPTY = 'CustomEmptyNode',
-    END = 'customEndNode'
 }

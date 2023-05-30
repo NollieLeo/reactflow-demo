@@ -1,5 +1,4 @@
 import { NodeCustomEnum } from "@/types/customNodes";
-import { EdgeCustomEnum } from "../types/customEdges";
 import { BasicEdgeType, BasicNodeType } from "@/types";
 import { CUSTOM_NODE_BASIC_TYPE_MAP } from "@/constant/customNodes";
 
@@ -48,7 +47,7 @@ export const initialNodes: BasicNodeType[] = [
         data: { label: "Stupid7" },
         position,
     },
-];
+].map((node) => ({ ...node, ...CUSTOM_NODE_BASIC_TYPE_MAP[node.type], }));
 
 export const initialEdges: BasicEdgeType[] = [
     {

@@ -7,12 +7,13 @@ const CustomDecisionNode = (props: NodeProps) => {
   return (
     <CustomNodeWrapper
       {...props}
-      className="customDecisionNode"
       handles={[Position.Bottom, Position.Top]}
       addonBtns={[]}
     >
-      <div className="customDecisionNode-background"></div>
-      <div className="customDecisionNode-content">{data.label}</div>
+      <div className="customDecisionNode">
+        <div className="customDecisionNode-background"></div>
+        <div className="customDecisionNode-content">{data.label}</div>
+      </div>
     </CustomNodeWrapper>
   );
 };

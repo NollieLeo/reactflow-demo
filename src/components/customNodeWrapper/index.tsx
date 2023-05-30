@@ -1,4 +1,4 @@
-import { CSSProperties, FC, ReactNode, useState } from "react";
+import { CSSProperties, FC, ReactNode } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 
 import classnames from "classnames";
@@ -7,7 +7,6 @@ import "./index.scss";
 import CustomAddBtn from "../customAddBtn";
 import { map } from "lodash-es";
 import { useEventsFlowContext } from "@/pages/events-flow/stores";
-import { NodeCustomEnum } from "@/types/customNodes";
 import ActionsMenu from "../actionsMenu";
 import { MenuProps } from "antd";
 
@@ -58,13 +57,11 @@ const CustomNodeWrapper: FC<CustomWrapper> = (props) => {
 
   const cls = classnames("customNodeWrapper", className);
 
-
-  const { onAddNodes } = useEventsFlowContext();
+  const { onAddAction } = useEventsFlowContext();
 
   const onSelectItem: MenuProps["onClick"] = (params) => {
     const { key } = params;
-    console.log(params);
-    onAddNodes(id, key);
+    onAddAction(id, key);
   };
 
   const renderNodeAddonBtn = () => {

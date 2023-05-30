@@ -20,18 +20,8 @@ const positionMap: Record<string, Position> = {
     B: Position.Bottom,
 };
 
-const getPosition = (pointNode: HierarchyPointNode<BasicNodeType>, direction: Direction, root: HierarchyPointNode<BasicNodeType>) => {
-    const { x, y, parent, data: originBasicNodeData, children } = pointNode;
-    const { type } = originBasicNodeData;
-    // const { width: rootNodeWidth } = root.data;
-    // const { width: curNodeWidth } = originBasicNodeData;
-    // if (type && [NodeCustomEnum.END, NodeCustomEnum.START].includes(type)) {
-    //     const middlePos = {
-    //         x: 0,
-    //         y: y
-    //     }
-    //     return middlePos
-    // }
+const getPosition = (pointNode: HierarchyPointNode<BasicNodeType>, direction: Direction,) => {
+    const { x, y, } = pointNode;
     switch (direction) {
         case 'LR':
             return { x: y, y: x };
@@ -47,9 +37,16 @@ const getPosition = (pointNode: HierarchyPointNode<BasicNodeType>, direction: Di
 // initialize the tree layout (see https://observablehq.com/@d3/tree for examples)
 const layout = tree<BasicNodeType>()
     // the node size configures the spacing between the nodes ([width, height])
-    .nodeSize([140, 100])
+    .nodeSize([220, 110])
     // this is needed for creating equal space between all nodes
-    .separation(() => 1);
+    .separation((nodeA, nodeB) => {
+        console.log(nodeA, nodeB);
+        const maxWidth = Math.max(nodeA.data.width || 0, nodeB.data.width || 0);
+        const minWidth = Math.min(nodeA.data.width || 0, nodeB.data.width || 0);
+        if (maxWidth === minWidth) return 1
+        console.log(maxWidth / minWidth)
+        return (maxWidth / minWidth) * (maxWidth / 220)
+    });
 
 const nodeCountSelector = (state: ReactFlowState) => state.nodeInternals.size;
 
@@ -79,10 +76,10 @@ function useAutoLayout(options: Options) {
                 return edges.find((e: BasicEdgeType) => e.target === node.id)?.source
             })
 
-        const layer = hierarchy(nodes)
+        const layerTree = hierarchy(nodes)
 
         // run the layout algorithm with the hierarchy data structure
-        const root = layout(layer);
+        const root = layout(layerTree);
 
         // set the React Flow nodes with the positions from the layout
         setNodes((nodes) =>
@@ -93,13 +90,9 @@ function useAutoLayout(options: Options) {
 
                 return {
                     ...node,
-                    draggable: false,
-                    dragging: false,
-                    deletable: true,
-                    selectable: true,
                     sourcePosition: positionMap[direction[1]],
                     targetPosition: positionMap[direction[0]],
-                    position: getPosition(curNode, direction, root),
+                    position: getPosition(curNode, direction),
                     style: { opacity: 1 },
                 };
             }).filter(isDefined)

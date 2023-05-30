@@ -1,5 +1,8 @@
 .customNodeWrapper {
   position: relative;
+  width: 150px;
+  display: flex;
+  justify-content: center;
   &:hover {
     .nodeAddonBtn {
       display: block;
@@ -13,7 +16,7 @@
     display: none;
   }
   .react-flow__handle {
-    &[data-handleid= "top"] {
+    &[data-handleid="top"] {
       visibility: hidden;
     }
   }

@@ -1,12 +1,13 @@
+import { BASIC_NODE_TYPE_DATA } from '@/constant/customNodes';
 import { BasicEdgeType, BasicNodeType } from '../types/index'
 import uniqid from 'uniqid'
 
-export function createNode(nodeData: Omit<BasicNodeType, 'id' | 'position'>): BasicNodeType {
+export function createNode(nodeData: Omit<BasicNodeType, 'id'>): BasicNodeType {
     const nodeId = uniqid.process();
 
     return {
         ...nodeData,
-        position: { x: 0, y: 0 },
+        ...BASIC_NODE_TYPE_DATA,
         id: nodeId,
     }
 }

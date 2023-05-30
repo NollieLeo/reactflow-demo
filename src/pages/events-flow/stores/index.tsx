@@ -4,13 +4,12 @@ import { BasicEdgeType, BasicNodeType } from "@/types";
 import { initialNodes, initialEdges } from "@/mocks";
 import { NodeCustomEnum } from "@/types/customNodes";
 import { createEdge, createNode } from "@/utils/createNode";
-import { getConnectedEdges, getIncomers, getOutgoers } from "reactflow";
 
 type EventFlowContext = {
   store: typeof eventsFlowStore;
   nodes: BasicNodeType[];
   edges: BasicEdgeType[];
-  onAddNodes(
+  onAddAction(
     sourceId: string,
     nodeType?: NodeCustomEnum.PROCESS | NodeCustomEnum.DECISION
   ): void;
@@ -35,58 +34,105 @@ export const StoreProvider = (props: any) => {
   };
 
   const genDesicionNodeAndEdges = (
-    sourceId: string
+    sourceId: string,
+    isUpdate?: boolean
   ): [BasicNodeType[], BasicEdgeType[]] => {
-    const newNode = createNode({
+    const sourceNode = getNodeById(sourceId);
+
+    if (!sourceNode) {
+      throw `node: ${sourceId} doesn't exsit`;
+    }
+
+    const createdNode = createNode({
       type: NodeCustomEnum.DECISION,
       data: { label: "desicion" },
+      position: sourceNode.position,
     });
 
     const leftEmptyNode = createNode({
       type: NodeCustomEnum.EMPTY,
       data: { label: "left" },
+      position: sourceNode.position,
     });
+
     const rightEmptyNode = createNode({
       type: NodeCustomEnum.EMPTY,
       data: { label: "right" },
+      position: sourceNode.position,
     });
 
     const newEdge = createEdge({
       source: sourceId,
-      target: newNode.id,
+      target: createdNode.id,
     });
 
     const edgeToLeft = createEdge({
-      source: newNode.id,
+      source: !isUpdate ? createdNode.id : sourceId,
       target: leftEmptyNode.id,
     });
 
     const edgeToRight = createEdge({
-      source: newNode.id,
+      source: !isUpdate ? createdNode.id : sourceId,
       target: rightEmptyNode.id,
     });
 
+    const resNodes = isUpdate
+      ? nodes.map((node) => {
+          if (node.id === sourceId) {
+            return {
+              ...createdNode,
+              position: node.position,
+              id: sourceId,
+            };
+          }
+          return node;
+        })
+      : nodes.concat([createdNode]);
+
+    const resEdges = isUpdate ? edges : edges.concat([newEdge]);
+
     return [
-      [newNode, leftEmptyNode, rightEmptyNode],
-      [newEdge, edgeToLeft, edgeToRight],
+      resNodes.concat([leftEmptyNode, rightEmptyNode]),
+      resEdges.concat([edgeToLeft, edgeToRight]),
     ];
   };
 
   const genProcessNodeAndEdges = (
-    sourceId: string
+    sourceId: string,
+    isUpdate?: boolean
   ): [BasicNodeType[], BasicEdgeType[]] => {
-    const newNode = createNode({
+    const sourceNode = getNodeById(sourceId);
+
+    if (!sourceNode) {
+      throw `node: ${sourceId} doesn't exsit`;
+    }
+    const createdNode = createNode({
       type: NodeCustomEnum.PROCESS,
       data: {
         label: "motherfucker",
       },
+      position: sourceNode.position,
     });
 
     const newEdge = createEdge({
       source: sourceId,
-      target: newNode.id,
+      target: createdNode.id,
     });
-    return [[newNode], [newEdge]];
+    const resNodes = !isUpdate
+      ? nodes.concat([createdNode])
+      : nodes.map((node) => {
+          if (node.id === sourceId) {
+            return {
+              ...createdNode,
+              position: node.position,
+              id: sourceId,
+            };
+          }
+          return node;
+        });
+    const resEdges = !isUpdate ? edges.concat([newEdge]) : edges;
+
+    return [resNodes, resEdges];
   };
 
   const genNodesAndEdgesMap = {
@@ -95,15 +141,11 @@ export const StoreProvider = (props: any) => {
   };
 
   /** node add callback */
-  const onAddNodes: EventFlowContext["onAddNodes"] = (
+  const onAddAction: EventFlowContext["onAddAction"] = (
     sourceId,
     addonNodeType = NodeCustomEnum.PROCESS
   ) => {
-    let currentNodes = nodes;
-
     const sourceNode = getNodeById(sourceId);
-
-    let realSourceId = sourceId;
 
     if (!sourceNode) {
       throw `node: ${sourceId} doesn't exsit`;
@@ -111,18 +153,15 @@ export const StoreProvider = (props: any) => {
 
     const { type: sourceNodeType } = sourceNode;
 
-    if (sourceNodeType === NodeCustomEnum.EMPTY) {
-      const incomers = getIncomers(sourceNode, nodes, edges);
-      const parent = incomers[0];
-      if (parent) realSourceId = parent.id;
-      currentNodes = currentNodes.filter((node) => node !== sourceNode);
-    }
+    const shouldUpdateSourceNode = sourceNodeType === NodeCustomEnum.EMPTY;
 
-    const [newNodes, newEdges] =
-      genNodesAndEdgesMap[addonNodeType](realSourceId);
+    const [newNodes, newEdges] = genNodesAndEdgesMap[addonNodeType](
+      sourceId,
+      shouldUpdateSourceNode
+    );
 
-    setNodes(currentNodes.concat(newNodes));
-    setEdges((edges) => edges.concat(newEdges));
+    setNodes(() => newNodes);
+    setEdges(() => newEdges);
   };
 
   const onUpdateNode: EventFlowContext["onUpdateNode"] = (nodeId, nodeData) => {
@@ -143,7 +182,7 @@ export const StoreProvider = (props: any) => {
     store: eventsFlowStore,
     nodes,
     edges,
-    onAddNodes,
+    onAddAction,
     setNodes,
     setEdges,
     onUpdateNode,

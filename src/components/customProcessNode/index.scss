@@ -1,14 +1,37 @@
 .customProcessNode {
-  height: 40px;
-  width: 80px;
-  border-radius: 8px;
-  line-height: 40px;
-  border: 1px solid #505050;
+  height: 80px;
+  width: 200px;
+  border-radius: 12px;
+  border: 1px solid transparent;
   background-color: #333333;
   color: #fff;
-  text-align: center;
   font-size: 14px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
   &:hover {
-    border: 1px solid #618bf6;
+    border-color: #618bf6;
+    .nodeOptionMenuBtn {
+      display: block;
+    }
+  }
+  &-top {
+    display: flex;
+    align-items: center;
+  }
+  &-name {
+    margin-left: 8px;
+  }
+  .nodeOptionMenuBtn {
+    margin-left: auto;
+    display: none;
+  }
+  &-bottom {
+    margin-top: 8px;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.65);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 }
