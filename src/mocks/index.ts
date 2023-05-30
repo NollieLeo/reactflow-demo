@@ -48,12 +48,6 @@ export const initialNodes: BasicNodeType[] = [
         data: { label: "Stupid7" },
         position,
     },
-    {
-        id: "8",
-        type: NodeCustomEnum.END,
-        data: { label: "End", },
-        position
-    }
 ];
 
 export const initialEdges: BasicEdgeType[] = [
@@ -98,18 +92,4 @@ export const initialEdges: BasicEdgeType[] = [
         type: 'smoothstep'
 
     },
-    {
-        id: "e6-8",
-        source: "6",
-        target: "8",
-        type: 'smoothstep'
-
-    },
-    {
-        id: "e7-8",
-        source: "7",
-        target: "8",
-        type: 'smoothstep'
-
-    }
 ];

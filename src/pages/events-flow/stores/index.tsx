@@ -2,14 +2,9 @@ import { createContext, useContext, useState } from "react";
 import { eventsFlowStore } from "./useEventsFlowStore";
 import { BasicEdgeType, BasicNodeType } from "@/types";
 import { initialNodes, initialEdges } from "@/mocks";
-import uniqid from "uniqid";
 import { NodeCustomEnum } from "@/types/customNodes";
-import {
-  Position,
-  getConnectedEdges,
-  getIncomers,
-  getOutgoers,
-} from "reactflow";
+import { createEdge, createNode } from "@/utils/createNode";
+import { getConnectedEdges, getIncomers, getOutgoers } from "reactflow";
 
 type EventFlowContext = {
   store: typeof eventsFlowStore;
@@ -17,8 +12,8 @@ type EventFlowContext = {
   edges: BasicEdgeType[];
   onAddNodes(
     sourceId: string,
-    position?: Position
-  ): [BasicNodeType, BasicEdgeType];
+    nodeType?: NodeCustomEnum.PROCESS | NodeCustomEnum.DECISION
+  ): void;
   onUpdateNode(nodeId: string, nodeData: BasicNodeType): void;
   setNodes: React.Dispatch<React.SetStateAction<BasicNodeType[]>>;
   setEdges: React.Dispatch<React.SetStateAction<BasicEdgeType[]>>;
@@ -39,81 +34,95 @@ export const StoreProvider = (props: any) => {
     return nodes.find((node) => node.id === id);
   };
 
+  const genDesicionNodeAndEdges = (
+    sourceId: string
+  ): [BasicNodeType[], BasicEdgeType[]] => {
+    const newNode = createNode({
+      type: NodeCustomEnum.DECISION,
+      data: { label: "desicion" },
+    });
+
+    const leftEmptyNode = createNode({
+      type: NodeCustomEnum.EMPTY,
+      data: { label: "left" },
+    });
+    const rightEmptyNode = createNode({
+      type: NodeCustomEnum.EMPTY,
+      data: { label: "right" },
+    });
+
+    const newEdge = createEdge({
+      source: sourceId,
+      target: newNode.id,
+    });
+
+    const edgeToLeft = createEdge({
+      source: newNode.id,
+      target: leftEmptyNode.id,
+    });
+
+    const edgeToRight = createEdge({
+      source: newNode.id,
+      target: rightEmptyNode.id,
+    });
+
+    return [
+      [newNode, leftEmptyNode, rightEmptyNode],
+      [newEdge, edgeToLeft, edgeToRight],
+    ];
+  };
+
+  const genProcessNodeAndEdges = (
+    sourceId: string
+  ): [BasicNodeType[], BasicEdgeType[]] => {
+    const newNode = createNode({
+      type: NodeCustomEnum.PROCESS,
+      data: {
+        label: "motherfucker",
+      },
+    });
+
+    const newEdge = createEdge({
+      source: sourceId,
+      target: newNode.id,
+    });
+    return [[newNode], [newEdge]];
+  };
+
+  const genNodesAndEdgesMap = {
+    [NodeCustomEnum.PROCESS]: genProcessNodeAndEdges,
+    [NodeCustomEnum.DECISION]: genDesicionNodeAndEdges,
+  };
+
   /** node add callback */
   const onAddNodes: EventFlowContext["onAddNodes"] = (
     sourceId,
-    position = Position.Bottom,
-    targetNodeData?: BasicNodeType
+    addonNodeType = NodeCustomEnum.PROCESS
   ) => {
-    const targetId = uniqid.process();
+    let currentNodes = nodes;
 
     const sourceNode = getNodeById(sourceId);
+
+    let realSourceId = sourceId;
+
     if (!sourceNode) {
       throw `node: ${sourceId} doesn't exsit`;
     }
 
-    const { type } = sourceNode;
-    const incomers = getOutgoers(sourceNode, nodes, edges);
-    const connectedEdges = getConnectedEdges([sourceNode], edges);
+    const { type: sourceNodeType } = sourceNode;
 
-    const newNode: BasicNodeType = {
-      id: targetId,
-      type: NodeCustomEnum.PROCESS,
-      position: { x: 0, y: 0 },
-      data: {
-        label: uniqid.process(),
-      },
-    };
-
-    const connectionSourceToNewTarget = {
-      id: uniqid.process(),
-      source: sourceId,
-      target: targetId,
-      style: { opacity: 0 },
-      sourceHandle: position,
-    };
-
-    if ([NodeCustomEnum.PROCESS, NodeCustomEnum.START].includes(type)) {
-      const firstTarget = incomers[0];
-      const edgeShouldBeDeleted = connectedEdges.find(
-        (edge) => edge.source === sourceId && edge.target === firstTarget.id
-      );
-
-      const connectionNewTargetToOldTarget = {
-        id: uniqid.process(),
-        source: targetId,
-        target: firstTarget.id,
-        style: { opacity: 0 },
-        sourceHandle: position,
-      };
-
-      setNodes((nodes) => nodes.concat([newNode]));
-      setEdges((edges) =>
-        edges
-          .filter((edge) => edgeShouldBeDeleted !== edge)
-          .concat([connectionSourceToNewTarget, connectionNewTargetToOldTarget])
-      );
-    } else if (type === NodeCustomEnum.DECISION) {
-      const edgeShouldBeDeleted = connectedEdges.find(
-        (edge) => edge.sourceHandle === position
-      );
-      if (!edgeShouldBeDeleted) return;
-      const oldTargetNode = getNodeById(edgeShouldBeDeleted?.target);
-      if (!oldTargetNode) return;
-      const connectionNewTargetToOldTarget = {
-        id: uniqid.process(),
-        source: targetId,
-        target: oldTargetNode?.id,
-        style: { opacity: 0 },
-        sourceHandle: position,
-      };
-      setNodes((nodes) => nodes.concat([newNode]));
-      setEdges((edges) =>
-        edges
-          .filter((edge) => edgeShouldBeDeleted !== edge)
-          .concat([connectionSourceToNewTarget, connectionNewTargetToOldTarget])
-      );
+    if (sourceNodeType === NodeCustomEnum.EMPTY) {
+      const incomers = getIncomers(sourceNode, nodes, edges);
+      const parent = incomers[0];
+      if (parent) realSourceId = parent.id;
+      currentNodes = currentNodes.filter((node) => node !== sourceNode);
     }
+
+    const [newNodes, newEdges] =
+      genNodesAndEdgesMap[addonNodeType](realSourceId);
+
+    setNodes(currentNodes.concat(newNodes));
+    setEdges((edges) => edges.concat(newEdges));
   };
 
   const onUpdateNode: EventFlowContext["onUpdateNode"] = (nodeId, nodeData) => {

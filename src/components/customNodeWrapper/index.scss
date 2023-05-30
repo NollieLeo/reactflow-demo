@@ -12,4 +12,9 @@
     z-index: 999;
     display: none;
   }
+  .react-flow__handle {
+    &[data-handleid= "top"] {
+      visibility: hidden;
+    }
+  }
 }

@@ -130,7 +130,7 @@ export default function App() {
     node: BasicNodeType
   ) => {
     if (node) {
-      setSelectedNode(node);
+      // setSelectedNode(node);
     }
     // on click, we want to add create a new node connection the clicked node
     // onAddNodes(node.id);
@@ -138,7 +138,6 @@ export default function App() {
 
   return (
     <div className="events-flow">
-      <Button>添加</Button>
       <Modal
         open={!!selectedNode}
         onCancel={() => setSelectedNode(undefined)}
@@ -170,7 +169,7 @@ export default function App() {
         // onNodeMouseLeave={() => setHoveredNode(undefined)}
         // newly added edges get these options automatically
         minZoom={-Infinity}
-        maxZoom={Infinity}
+        maxZoom={1}
         style={{
           background: "#202020",
         }}
