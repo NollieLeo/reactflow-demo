@@ -6,9 +6,9 @@ import classnames from "classnames";
 import "./index.scss";
 import CustomAddBtn from "../customAddBtn";
 import { map } from "lodash-es";
-import { useEventsFlowContext } from "@/pages/events-flow/stores";
 import ActionsMenu from "../actionsMenu";
 import { MenuProps } from "antd";
+import useFlowActions from "@/hooks/useFlowActions";
 
 interface CustomWrapper extends NodeProps {
   className?: string;
@@ -57,9 +57,7 @@ const CustomNodeWrapper: FC<CustomWrapper> = (props) => {
 
   const cls = classnames("customNodeWrapper", className);
 
-  const { onAddAction, nodes, edges } = useEventsFlowContext();
-
-  const outers = getOutgoers(props, nodes, edges);
+  const { onAddAction, hasOutgoers } = useFlowActions();
 
   const onSelectItem: MenuProps["onClick"] = (params) => {
     const { key } = params;
@@ -90,7 +88,7 @@ const CustomNodeWrapper: FC<CustomWrapper> = (props) => {
         : "target";
 
       const cls = classnames("customHandle", {
-        hidden: !outers.length || value === Position.Top,
+        hidden: hasOutgoers(id) || value === Position.Top,
       });
       return (
         <Handle

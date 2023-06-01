@@ -31,8 +31,6 @@ const SuccessEdge: FC<EdgeProps> = (props) => {
     borderRadius: 16,
   });
 
-  console.log(labelX, labelY);
-
   return (
     <>
       <BaseEdge

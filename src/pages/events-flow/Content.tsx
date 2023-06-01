@@ -1,29 +1,20 @@
 import ReactFlow, {
-  applyNodeChanges,
-  EdgeChange,
-  applyEdgeChanges,
   useReactFlow,
   MarkerType,
   NodeMouseHandler,
-  OnNodesChange,
-  OnEdgesChange,
-  NodeChange,
+  useNodesState,
+  useEdgesState,
 } from "reactflow";
-import {
-  useEffect,
-  useState,
-  DragEventHandler,
-  DragEvent,
-  MouseEvent,
-} from "react";
+import { useEffect, useState, MouseEvent } from "react";
 import "reactflow/dist/style.css";
 import { Modal } from "antd";
 import { CUSTOM_NODE_TYPES } from "@/constant/customNodes";
 import { CUSTOM_EDGE_TYPES } from "@/constant/customEdges";
-import { useEventsFlowContext } from "./stores";
 import { BasicNodeType } from "@/types";
 
 import "./index.scss";
+import { initialNodes, initialEdges } from "@/mocks";
+import useFlowActions from "@/hooks/useFlowActions";
 
 const defaultEdgeOptions = {
   type: "smoothstep",
@@ -39,37 +30,17 @@ const proOptions = {
 export default function App() {
   // this hook handles the computation of the layout once the elements or the direction changes
   const { fitView } = useReactFlow();
-  const { edges, nodes, setEdges, setNodes, onUpdateAction } =
-    useEventsFlowContext();
+  const { onUpdateAction } = useFlowActions();
+
+  const [nodes, _setNodes, onNodesChange] =
+    useNodesState<BasicNodeType["data"]>(initialNodes);
+  const [edges, _setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   const [selectedNode, setSelectedNode] = useState<BasicNodeType>();
 
-  // this function is called once the node from the sidebar is dropped onto a node in the current graph
-  const onDrop: DragEventHandler = (evt: DragEvent<HTMLDivElement>) => {
-    // make sure that the event target is a DOM element
-    // if (evt.target instanceof Element) {
-    //   // from the target element search for the node wrapper element which has the node id as attribute
-    //   const targetId = evt.target
-    //     .closest(".react-flow__node")
-    //     ?.getAttribute("data-id");
-    //   if (targetId) {
-    //     // now we can create a connection to the drop target node
-    //     onAddNodes(targetId);
-    //   }
-    // }
-  };
-
-  const onNodesChange: OnNodesChange = (changes: NodeChange[]) => {
-    setNodes((nodes) => applyNodeChanges(changes, nodes));
-  };
-
-  const onEdgesChange: OnEdgesChange = (changes: EdgeChange[]) => {
-    setEdges((edges) => applyEdgeChanges(changes, edges));
-  };
-
   // every time  nodes change, we want to center the graph again
   useEffect(() => {
-    fitView({ duration: 400 });
+    fitView({ duration: 800 });
   }, [nodes, fitView]);
 
   // this function is called when a node in the graph is clicked
@@ -100,7 +71,6 @@ export default function App() {
       >
         随便改个node
       </Modal>
-      {/* {renderEndMarkers()} */}
       <ReactFlow
         fitView
         proOptions={proOptions}
@@ -111,7 +81,6 @@ export default function App() {
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
-        onDrop={onDrop}
         onNodeClick={onNodeClick}
         // onNodeMouseEnter={onNodeMouseEnter}
         // onNodeMouseLeave={() => setHoveredNode(undefined)}

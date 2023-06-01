@@ -7,18 +7,24 @@ import Thunder from "@/assets/thunder.svg";
 import NodeOptionMenu from "../nodeOptionMenu";
 import "./index.scss";
 import { CustomBatchNodeType } from "@/types";
+import useFlowActions from "@/hooks/useFlowActions";
 import { useEventsFlowContext } from "@/pages/events-flow/stores";
 
 const CustomBatchNode = (props: NodeProps<CustomBatchNodeType["data"]>) => {
   const { data, id } = props;
-  const { onUpdateAction, onDeleteAction } = useEventsFlowContext();
+  const { onUpdateAction, onDeleteAction } = useFlowActions();
+  const { renderLayout } = useEventsFlowContext();
   function onSelectItem() {
-    onUpdateAction(id, {
-      data: {
-        ...data,
-        triggers: data.triggers.concat([1]),
+    onUpdateAction(
+      id,
+      {
+        data: {
+          ...data,
+          triggers: data.triggers.concat([1]),
+        },
       },
-    });
+      renderLayout
+    );
   }
 
   const onNodeOptSelect: MenuProps["onClick"] = (param) => {

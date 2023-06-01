@@ -3,12 +3,12 @@ import { Position, NodeProps } from "reactflow";
 import "./index.scss";
 import NodeOptionMenu from "../nodeOptionMenu";
 import { MenuProps } from "antd";
-import { useEventsFlowContext } from "@/pages/events-flow/stores";
+import useFlowActions from "@/hooks/useFlowActions";
 
 const CustomDecisionNode = (props: NodeProps) => {
   const { data, id } = props;
 
-  const { onDeleteAction } = useEventsFlowContext();
+  const { onDeleteAction } = useFlowActions();
 
   const onSelectActionOpt: MenuProps["onClick"] = (param) => {
     const { key } = param;

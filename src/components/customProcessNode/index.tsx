@@ -4,12 +4,12 @@ import "./index.scss";
 import { Image, MenuProps } from "antd";
 import Thunder from "@/assets/thunder.svg";
 import NodeOptionMenu from "../nodeOptionMenu";
-import { useEventsFlowContext } from "@/pages/events-flow/stores";
+import useFlowActions from "@/hooks/useFlowActions";
 
 const CustomProcessNode = (props: NodeProps) => {
   const { data, id } = props;
 
-  const { onDeleteAction } = useEventsFlowContext();
+  const { onDeleteAction } = useFlowActions();
 
   const onSelectActionOpt: MenuProps["onClick"] = (param) => {
     const { key } = param;
