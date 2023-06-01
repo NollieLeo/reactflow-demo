@@ -2,5 +2,6 @@
 
 
 export enum EdgeCustomEnum {
-    BUTTON = 'customButtonEdge',
+    Success = 'customSuccessEdge',
+    Error = 'customErrorEdge'
 }

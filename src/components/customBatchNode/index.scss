@@ -1,0 +1,91 @@
+.customBatchNode {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  header {
+    width: 160px;
+    height: 38px;
+    text-align: center;
+    background: #7d40ff;
+    border-radius: 12px;
+    color: #fff;
+    display: flex;
+    padding: 8px 12px;
+    align-items: center;
+    justify-content: center;
+    > span {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .nodeOptionMenuBtn {
+      display: none;
+      margin-left: auto;
+      margin-right: 0;
+      transition: 0.25s;
+    }
+    &:hover {
+      .nodeOptionMenuBtn {
+        display: block;
+      }
+    }
+  }
+  main {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 20px;
+    gap: 22px;
+    padding: 24px;
+    max-width: 708px;
+
+    border: 2px solid #7d40ff;
+    border-radius: 16px;
+    position: relative;
+    background-color: rgba(125, 64, 255, 0.1);
+    .nodeAddonBtn {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: -12px;
+      margin: auto;
+      background: #7d40ff;
+      color: #fff;
+    }
+  }
+  &-divider {
+    height: 28px;
+    background: #7d40ff;
+  }
+  &-item {
+    height: 80px;
+    width: 200px;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    background-color: #333333;
+    color: #fff;
+    font-size: 14px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    &-top {
+      display: flex;
+      align-items: center;
+    }
+    &-name {
+      margin-left: 8px;
+    }
+    .nodeOptionMenuBtn {
+      margin-left: auto;
+      display: none;
+    }
+    &-bottom {
+      margin-top: 8px;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.65);
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+}

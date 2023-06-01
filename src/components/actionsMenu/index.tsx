@@ -11,6 +11,10 @@ const items: MenuProps["items"] = [
     key: NodeCustomEnum.DECISION,
     label: "condition",
   },
+  {
+    key: NodeCustomEnum.BATCH,
+    label: "batch",
+  },
 ];
 
 const ActionsMenu: FC<{

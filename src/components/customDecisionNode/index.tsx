@@ -1,9 +1,20 @@
 import CustomNodeWrapper from "../customNodeWrapper";
 import { Position, NodeProps } from "reactflow";
 import "./index.scss";
+import NodeOptionMenu from "../nodeOptionMenu";
+import { MenuProps } from "antd";
+import { useEventsFlowContext } from "@/pages/events-flow/stores";
 
 const CustomDecisionNode = (props: NodeProps) => {
-  const { data } = props;
+  const { data, id } = props;
+
+  const { onDeleteAction } = useEventsFlowContext();
+
+  const onSelectActionOpt: MenuProps["onClick"] = (param) => {
+    const { key } = param;
+    onDeleteAction(id, "tree");
+  };
+
   return (
     <CustomNodeWrapper
       {...props}
@@ -11,8 +22,8 @@ const CustomDecisionNode = (props: NodeProps) => {
       addonBtns={[]}
     >
       <div className="customDecisionNode">
-        <div className="customDecisionNode-background"></div>
-        <div className="customDecisionNode-content">{data.label}</div>
+        <div className="customDecisionNode-label">{data.label}</div>
+        <NodeOptionMenu onSelectItem={onSelectActionOpt} />
       </div>
     </CustomNodeWrapper>
   );

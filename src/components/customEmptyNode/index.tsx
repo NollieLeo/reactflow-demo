@@ -4,8 +4,8 @@ import "./index.scss";
 
 const CustomEmptyNode = (props: NodeProps) => {
   return (
-    <CustomNodeWrapper className="CustomEmptyNode-wrapper" {...props} handles={[Position.Top]}>
-      <div className="CustomEmptyNode"></div>
+    <CustomNodeWrapper className="customEmptyNode-wrapper" {...props} handles={[Position.Top]}>
+      <div className="customEmptyNode"></div>
     </CustomNodeWrapper>
   );
 };

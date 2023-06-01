@@ -4,6 +4,9 @@ import { BasicEdgeType, BasicNodeType } from "@/types";
 import { initialNodes, initialEdges } from "@/mocks";
 import { NodeCustomEnum } from "@/types/customNodes";
 import { createEdge, createNode } from "@/utils/createNode";
+import useAutoLayout from "@/hooks/useAutoLayout";
+import { getIncomers, getOutgoers, useReactFlow } from "reactflow";
+import { EdgeCustomEnum } from "@/types/customEdges";
 
 type EventFlowContext = {
   store: typeof eventsFlowStore;
@@ -13,7 +16,11 @@ type EventFlowContext = {
     sourceId: string,
     nodeType?: NodeCustomEnum.PROCESS | NodeCustomEnum.DECISION
   ): void;
-  onUpdateNode(nodeId: string, nodeData: BasicNodeType): void;
+  onUpdateAction(
+    nodeId: BasicNodeType["id"],
+    nodeData: Partial<BasicNodeType>
+  ): void;
+  onDeleteAction(nodeId: BasicNodeType["id"], type?: "node" | "tree"): void;
   setNodes: React.Dispatch<React.SetStateAction<BasicNodeType[]>>;
   setEdges: React.Dispatch<React.SetStateAction<BasicEdgeType[]>>;
 };
@@ -28,9 +35,11 @@ export const StoreProvider = (props: any) => {
   const { children } = props;
   const [nodes, setNodes] = useState<BasicNodeType[]>(initialNodes);
   const [edges, setEdges] = useState<BasicEdgeType[]>(initialEdges);
+  const renderLayout = useAutoLayout({ direction: "TB" });
+  const { deleteElements, getNode } = useReactFlow();
 
   const getNodeById = (id: BasicNodeType["id"]) => {
-    return nodes.find((node) => node.id === id);
+    return getNode(id);
   };
 
   const genDesicionNodeAndEdges = (
@@ -69,11 +78,13 @@ export const StoreProvider = (props: any) => {
     const edgeToLeft = createEdge({
       source: !isUpdate ? createdNode.id : sourceId,
       target: leftEmptyNode.id,
+      type: EdgeCustomEnum.Success,
     });
 
     const edgeToRight = createEdge({
       source: !isUpdate ? createdNode.id : sourceId,
       target: rightEmptyNode.id,
+      type: EdgeCustomEnum.Error,
     });
 
     const resNodes = isUpdate
@@ -125,6 +136,44 @@ export const StoreProvider = (props: any) => {
             return {
               ...createdNode,
               position: node.position,
+              width: createdNode.width,
+              height: createdNode.height,
+              id: sourceId,
+            };
+          }
+          return node;
+        });
+    const resEdges = !isUpdate ? edges.concat([newEdge]) : edges;
+
+    return [resNodes, resEdges];
+  };
+
+  const genBatchNodeAndEdges = (sourceId: string, isUpdate?: boolean) => {
+    const sourceNode = getNodeById(sourceId);
+
+    if (!sourceNode) {
+      throw `node: ${sourceId} doesn't exsit`;
+    }
+    const createdNode = createNode({
+      type: NodeCustomEnum.BATCH,
+      data: {
+        label: "motherfucker",
+        triggers: [1213],
+      },
+      position: sourceNode.position,
+    });
+
+    const newEdge = createEdge({
+      source: sourceId,
+      target: createdNode.id,
+    });
+    const resNodes = !isUpdate
+      ? nodes.concat([createdNode])
+      : nodes.map((node) => {
+          if (node.id === sourceId) {
+            return {
+              ...createdNode,
+              width: createdNode.width,
               id: sourceId,
             };
           }
@@ -138,6 +187,7 @@ export const StoreProvider = (props: any) => {
   const genNodesAndEdgesMap = {
     [NodeCustomEnum.PROCESS]: genProcessNodeAndEdges,
     [NodeCustomEnum.DECISION]: genDesicionNodeAndEdges,
+    [NodeCustomEnum.BATCH]: genBatchNodeAndEdges,
   };
 
   /** node add callback */
@@ -164,7 +214,10 @@ export const StoreProvider = (props: any) => {
     setEdges(() => newEdges);
   };
 
-  const onUpdateNode: EventFlowContext["onUpdateNode"] = (nodeId, nodeData) => {
+  const onUpdateAction: EventFlowContext["onUpdateAction"] = (
+    nodeId,
+    nodeData
+  ) => {
     setNodes((nodes) =>
       nodes.map((node) => {
         if (node.id === nodeId) {
@@ -176,6 +229,37 @@ export const StoreProvider = (props: any) => {
         return node;
       })
     );
+    setTimeout(() => {
+      renderLayout();
+    }, 0);
+  };
+
+  const onDeleteAction: EventFlowContext["onDeleteAction"] = (
+    nodeId: BasicNodeType["id"],
+    type = "tree"
+  ) => {
+    const node = getNodeById(nodeId);
+    if (!node) {
+      throw new Error(`delete node failed, the node ${nodeId} doesn't exist`);
+    }
+
+    const incomers = getIncomers(node, nodes, edges);
+    const outers = getOutgoers(node, nodes, edges);
+
+    if (incomers[0].type === NodeCustomEnum.DECISION) {
+      deleteElements({
+        nodes: outers,
+      });
+      onUpdateAction(nodeId, {
+        type: NodeCustomEnum.EMPTY,
+      });
+      return;
+    }
+
+    const deleteNodes = type === "tree" ? outers.concat(node) : [node];
+    deleteElements({
+      nodes: deleteNodes,
+    });
   };
 
   const params = {
@@ -185,7 +269,8 @@ export const StoreProvider = (props: any) => {
     onAddAction,
     setNodes,
     setEdges,
-    onUpdateNode,
+    onUpdateAction,
+    onDeleteAction,
   };
 
   return <Store.Provider value={params}>{children}</Store.Provider>;

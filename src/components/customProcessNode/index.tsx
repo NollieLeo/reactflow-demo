@@ -1,19 +1,28 @@
 import CustomNodeWrapper from "../customNodeWrapper";
 import { NodeProps } from "reactflow";
 import "./index.scss";
-import { Image } from "antd";
+import { Image, MenuProps } from "antd";
 import Thunder from "@/assets/thunder.svg";
 import NodeOptionMenu from "../nodeOptionMenu";
+import { useEventsFlowContext } from "@/pages/events-flow/stores";
 
 const CustomProcessNode = (props: NodeProps) => {
-  const { data } = props;
+  const { data, id } = props;
+
+  const { onDeleteAction } = useEventsFlowContext();
+
+  const onSelectActionOpt: MenuProps["onClick"] = (param) => {
+    const { key } = param;
+    onDeleteAction(id, "tree");
+  };
+
   return (
     <CustomNodeWrapper {...props}>
       <div className="customProcessNode">
         <div className="customProcessNode-top">
           <Image src={Thunder} preview={false} />
           <span className="customProcessNode-name">{data.label}</span>
-          <NodeOptionMenu />
+          <NodeOptionMenu onSelectItem={onSelectActionOpt} />
         </div>
         <div className="customProcessNode-bottom">
           Content word count exceeds ma...

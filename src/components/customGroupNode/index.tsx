@@ -2,17 +2,16 @@ import { NodeProps, Position } from "reactflow";
 import "./index.scss";
 import CustomNodeWrapper from "../customNodeWrapper";
 
-function CustomEndNode(props: NodeProps) {
+function CustomGroupNode(props: NodeProps) {
+  const { data } = props;
   return (
     <CustomNodeWrapper
       {...props}
-      handles={[Position.Top]}
-      addonBtns={[]}
-      className="customEndNode"
+      addonBtns={[Position.Bottom]}
     >
-      <span>结束</span>
+      <div className="customGroupNode">{data.label}</div>
     </CustomNodeWrapper>
   );
 }
 
-export default CustomEndNode;
+export default CustomGroupNode;

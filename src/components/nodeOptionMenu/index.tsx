@@ -1,5 +1,5 @@
-import { Button, Dropdown, MenuProps } from "antd";
-import { FC, ReactNode } from "react";
+import { Dropdown, MenuProps } from "antd";
+import { FC } from "react";
 import { MoreOutlined } from "@ant-design/icons";
 import "./index.scss";
 
@@ -7,6 +7,10 @@ const items: MenuProps["items"] = [
   {
     key: "delete",
     label: "delete",
+  },
+  {
+    key: "delete all",
+    label: "delete all",
   },
 ];
 

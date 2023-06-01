@@ -1,11 +1,13 @@
 import { ComponentType } from "react";
 import { EdgeProps } from "reactflow";
 import { EdgeCustomEnum } from "../types/customEdges";
-import CustomButtonEdge from "../components/customButtonEdge";
+import SuccessEdge from "@/components/SuccessEdge";
+import ErrorEdge from "@/components/ErrorEdge";
 
 
 const CUSTOM_EDGE_TYPES: Record<EdgeCustomEnum, ComponentType<EdgeProps>> = {
-    [EdgeCustomEnum.BUTTON]: CustomButtonEdge,
+    [EdgeCustomEnum.Success]: SuccessEdge,
+    [EdgeCustomEnum.Error]: ErrorEdge
 }
 
 export {

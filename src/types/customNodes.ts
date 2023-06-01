@@ -5,5 +5,7 @@ export enum NodeCustomEnum {
     START = 'customStartNode',
     PROCESS = 'customProcessNode',
     DECISION = 'customDecisionNode',
-    EMPTY = 'CustomEmptyNode',
+    EMPTY = 'customEmptyNode',
+    BATCH = 'customBatchNode',
+    GROUP = 'customGroupNode'
 }

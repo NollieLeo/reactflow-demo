@@ -13,7 +13,16 @@ interface CustomEdgeData {
     name: "motherfucker";
 }
 
-type BasicNodeType = Node<CustomNodeData, NodeCustomEnum | string>
+type NodeTypeWrapper<D extends CustomNodeData, T extends NodeCustomEnum> = Node<D, T>
+
+export type CustomCommonnNodeType = NodeTypeWrapper<CustomNodeData, NodeCustomEnum>;
+
+export type CustomBatchNodeType = NodeTypeWrapper<{
+    label: string,
+    triggers: any[]
+}, NodeCustomEnum.BATCH>
+
+type BasicNodeType = CustomCommonnNodeType | CustomBatchNodeType
 
 type BasicEdgeType = Edge
 

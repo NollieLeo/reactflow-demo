@@ -1,5 +1,5 @@
 import { CSSProperties, FC, ReactNode } from "react";
-import { Handle, NodeProps, Position } from "reactflow";
+import { Handle, NodeProps, Position, getOutgoers } from "reactflow";
 
 import classnames from "classnames";
 
@@ -57,7 +57,9 @@ const CustomNodeWrapper: FC<CustomWrapper> = (props) => {
 
   const cls = classnames("customNodeWrapper", className);
 
-  const { onAddAction } = useEventsFlowContext();
+  const { onAddAction, nodes, edges } = useEventsFlowContext();
+
+  const outers = getOutgoers(props, nodes, edges);
 
   const onSelectItem: MenuProps["onClick"] = (params) => {
     const { key } = params;
@@ -86,11 +88,15 @@ const CustomNodeWrapper: FC<CustomWrapper> = (props) => {
       )
         ? "source"
         : "target";
+
+      const cls = classnames("customHandle", {
+        hidden: !outers.length || value === Position.Top,
+      });
       return (
         <Handle
           key={value}
           type={type}
-          className="customHandle"
+          className={cls}
           position={value}
           isConnectable={isConnectable}
           id={value}

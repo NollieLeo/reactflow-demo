@@ -1,11 +1,8 @@
-.CustomEmptyNode {
-  width: 80px;
-  min-height: 24px;
+.customEmptyNode {
   &-wrapper {
     .nodeAddonBtn {
       display: block;
-      top: 0;
-      bottom: 0;
+      bottom: 0 !important;
     }
   }
 }

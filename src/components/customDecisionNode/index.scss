@@ -1,37 +1,30 @@
 .customDecisionNode {
-  height: 70px;
-  width: 80px;
-  background: transparent;
-  position: relative;
-  .react-flow__handle {
-    z-index: 2;
-  }
-
-  &-background {
-    position: absolute;
-    inset: 0;
-    margin: auto;
-    width: 56px;
-    height: 56px;
-    transform: rotate(45deg);
-    border: 1px solid #505050;
-    background-color: #333333;
-    border-radius: 8px;
-
-    &:hover {
-      border: 1px solid #618bf6;
+  height: 28px;
+  width: 120px;
+  background: #fff;
+  border-radius: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 13px;
+  &:hover {
+    border-color: #618bf6;
+    .nodeOptionMenuBtn {
+      display: block;
     }
   }
-  &-content {
+  .nodeOptionMenuBtn {
+    margin-left: auto;
+    display: none;
+  }
+  &-label {
     font-size: 14px;
+    line-height: 28px;
     overflow: hidden;
     white-space: nowrap;
-    line-height: 70px;
-    position: absolute;
-    inset: 0;
-    margin: auto;
     color: #fff;
     text-align: center;
     text-overflow: ellipsis;
+    color: #18181b;
   }
 }

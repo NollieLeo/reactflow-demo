@@ -1,13 +1,4 @@
 import ReactFlow, {
-  useNodesState,
-  useEdgesState,
-  addEdge,
-  Connection,
-  ReactFlowProvider,
-  Edge,
-  getIncomers,
-  getOutgoers,
-  getConnectedEdges,
   applyNodeChanges,
   EdgeChange,
   applyEdgeChanges,
@@ -18,9 +9,7 @@ import ReactFlow, {
   OnEdgesChange,
   NodeChange,
 } from "reactflow";
-import uniqid from "uniqid";
 import {
-  useCallback,
   useEffect,
   useState,
   DragEventHandler,
@@ -28,15 +17,13 @@ import {
   MouseEvent,
 } from "react";
 import "reactflow/dist/style.css";
-import { Button, Modal } from "antd";
+import { Modal } from "antd";
 import { CUSTOM_NODE_TYPES } from "@/constant/customNodes";
 import { CUSTOM_EDGE_TYPES } from "@/constant/customEdges";
 import { useEventsFlowContext } from "./stores";
-import useAutoLayout from "@/hooks/useAutoLayout";
-import { initialEdges, initialNodes } from "@/mocks";
-import { BasicEdgeType, BasicNodeType } from "@/types";
+import { BasicNodeType } from "@/types";
+
 import "./index.scss";
-import { NodeCustomEnum } from "@/types/customNodes";
 
 const defaultEdgeOptions = {
   type: "smoothstep",
@@ -52,10 +39,8 @@ const proOptions = {
 export default function App() {
   // this hook handles the computation of the layout once the elements or the direction changes
   const { fitView } = useReactFlow();
-  const { edges, nodes, setEdges, setNodes, onUpdateNode } =
+  const { edges, nodes, setEdges, setNodes, onUpdateAction } =
     useEventsFlowContext();
-
-  useAutoLayout({ direction: "TB" });
 
   const [selectedNode, setSelectedNode] = useState<BasicNodeType>();
 
@@ -69,7 +54,7 @@ export default function App() {
     //     ?.getAttribute("data-id");
     //   if (targetId) {
     //     // now we can create a connection to the drop target node
-    //     onAddAction(targetId);
+    //     onAddNodes(targetId);
     //   }
     // }
   };
@@ -87,42 +72,6 @@ export default function App() {
     fitView({ duration: 400 });
   }, [nodes, fitView]);
 
-  const onNodesDelete = useCallback(
-    (deleted) => {
-      const newEdges = deleted.reduce((acc, node) => {
-        const incomers = getIncomers(node, nodes, edges);
-        const outgoers = getOutgoers(node, nodes, edges);
-        const connectedEdges = getConnectedEdges([node], edges);
-        const remainingEdges = acc.filter(
-          (edge) => !connectedEdges.includes(edge)
-        );
-
-        const createdEdges = incomers.flatMap(
-          ({ id: source, type: sourceType }) =>
-            outgoers
-              .map(({ id: target, type: targetType }) => {
-                if (
-                  targetType !== NodeCustomEnum.END ||
-                  sourceType !== NodeCustomEnum.START
-                ) {
-                  return {
-                    id: uniqid.process(),
-                    source,
-                    target,
-                    type: "smoothstep",
-                  };
-                }
-                return undefined;
-              })
-              .filter(Boolean)
-        );
-        return [...remainingEdges, ...createdEdges];
-      }, edges);
-      setEdges(newEdges);
-    },
-    [nodes, edges]
-  );
-
   // this function is called when a node in the graph is clicked
   const onNodeClick: NodeMouseHandler = (
     _: MouseEvent,
@@ -132,7 +81,7 @@ export default function App() {
       // setSelectedNode(node);
     }
     // on click, we want to add create a new node connection the clicked node
-    // onAddAction(node.id);
+    // onAddNodes(node.id);
   };
 
   return (
@@ -141,7 +90,7 @@ export default function App() {
         open={!!selectedNode}
         onCancel={() => setSelectedNode(undefined)}
         onOk={() => {
-          onUpdateNode(selectedNode?.id, {
+          onUpdateAction(selectedNode?.id, {
             data: {
               label: "Motherfucker",
             },
@@ -151,6 +100,7 @@ export default function App() {
       >
         随便改个node
       </Modal>
+      {/* {renderEndMarkers()} */}
       <ReactFlow
         fitView
         proOptions={proOptions}
@@ -163,7 +113,6 @@ export default function App() {
         onEdgesChange={onEdgesChange}
         onDrop={onDrop}
         onNodeClick={onNodeClick}
-        onNodesDelete={onNodesDelete}
         // onNodeMouseEnter={onNodeMouseEnter}
         // onNodeMouseLeave={() => setHoveredNode(undefined)}
         // newly added edges get these options automatically
