@@ -14,13 +14,12 @@ type TreeNode = {
 class LayoutTree {
     root: any;
     flatternTree: any;
-    constructor(nodes: BasicNodeType[], edges: BasicEdgeType[], rootId = NodeCustomEnum.START) {
-        const [root, flatterTree] = this.generateTree(nodes, edges, rootId);
-        this.root = root;
-        this.flatternTree = flatterTree
+    constructor() {
+        this.root = null;
+        this.flatternTree = null
     }
 
-    private generateTree(nodes: BasicNodeType[], edges: BasicEdgeType[], rootId = NodeCustomEnum.START) {
+    generateTree(nodes: BasicNodeType[], edges: BasicEdgeType[], rootId = NodeCustomEnum.START) {
         if (!nodes.length && !edges.length) {
             return []
         }
@@ -74,13 +73,18 @@ class LayoutTree {
         }) // root is tree node like above
         const rootNode = layout.doLayout()
 
-        return [rootNode, this.flattern(rootNode)]
+        this.root = rootNode;
+        this.flatternTree = this.flattern();
+
+        return [rootNode, this.flatternTree]
     }
 
-    private flattern(nodes = [this.root]) {
+    private flattern() {
         const result = []
 
-        let newArr = [].concat(nodes);
+        if (!this.root) return
+
+        let newArr = [this.root];
 
         while (newArr.length) {
             const first = newArr.shift();

@@ -12,14 +12,15 @@ export type Options = {
     direction: Direction;
 };
 
-// const BASIC_GAP = 
-
 const positionMap: Record<string, Position> = {
     T: Position.Top,
     L: Position.Left,
     R: Position.Right,
     B: Position.Bottom,
 };
+
+const tree = new LayoutTree()
+
 
 const getPosition = (pointNode: HierarchyPointNode<BasicNodeType>, direction: Direction,) => {
     const { x, y, } = pointNode;
@@ -45,14 +46,13 @@ function useAutoLayout(options: Options) {
     const { direction } = options;
     const nodeCount = useStore(nodeCountSelector);
     const nodesInitialized = useStore(nodesInitializedSelector);
-    const { getNodes, getEdges, setNodes, setEdges, fitView } = useReactFlow();
+    const { getNodes, getEdges, setNodes, setEdges } = useReactFlow();
 
     const layoutRender = useCallback(() => {
         const nodes: BasicNodeType[] = getNodes();
         const edges: BasicEdgeType[] = getEdges();
 
-        const tree = new LayoutTree(nodes, edges)
-
+        tree.generateTree(nodes, edges)
         // set the React Flow nodes with the positions from the layout
         setNodes((nodes) =>
             nodes.map((node) => {
@@ -73,11 +73,9 @@ function useAutoLayout(options: Options) {
     }, [direction, getEdges, getNodes, setEdges, setNodes])
 
     useEffect(() => {
-        // only run the layout if there are nodes and they have been initialized with their dimensions
         if (!nodeCount || !nodesInitialized) {
             return;
         }
-
         layoutRender()
     }, [layoutRender, nodeCount, nodesInitialized]);
 

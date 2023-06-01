@@ -15,6 +15,10 @@ const items: MenuProps["items"] = [
     key: NodeCustomEnum.BATCH,
     label: "batch",
   },
+  {
+    key: NodeCustomEnum.GROUP,
+    label: "list loop",
+  },
 ];
 
 const ActionsMenu: FC<{

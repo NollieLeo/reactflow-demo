@@ -97,6 +97,43 @@ const useFlowActions = () => {
     ];
   };
 
+  const genGroupNodeAndEdges = (sourceId: string, isUpdate?: boolean) => {
+    const sourceNode = getNodeById(sourceId);
+
+    if (!sourceNode) {
+      throw `node: ${sourceId} doesn't exsit`;
+    }
+    const createdNode = createNode({
+      type: NodeCustomEnum.GROUP,
+      data: {
+        label: "motherfucker",
+      },
+      position: sourceNode.position,
+    });
+
+    const newEdge = createEdge({
+      source: sourceId,
+      target: createdNode.id,
+    });
+    const resNodes = !isUpdate
+      ? nodes.concat([createdNode])
+      : nodes.map((node) => {
+          if (node.id === sourceId) {
+            return {
+              ...createdNode,
+              position: node.position,
+              width: createdNode.width,
+              height: createdNode.height,
+              id: sourceId,
+            };
+          }
+          return node;
+        });
+    const resEdges = !isUpdate ? edges.concat([newEdge]) : edges;
+
+    return [resNodes, resEdges];
+  };
+
   const genProcessNodeAndEdges = (sourceId: string, isUpdate?: boolean) => {
     const sourceNode = getNodeById(sourceId);
 
@@ -174,6 +211,7 @@ const useFlowActions = () => {
     [NodeCustomEnum.PROCESS]: genProcessNodeAndEdges,
     [NodeCustomEnum.DECISION]: genDesicionNodeAndEdges,
     [NodeCustomEnum.BATCH]: genBatchNodeAndEdges,
+    [NodeCustomEnum.GROUP]: genGroupNodeAndEdges,
   };
 
   /** node add callback */
