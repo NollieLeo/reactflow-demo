@@ -6,9 +6,8 @@ import {
   getSmoothStepPath,
 } from "reactflow";
 import "./index.scss";
-import Error from "@/assets/error.svg";
 
-const ErrorEdge: FC<EdgeProps> = (props) => {
+const CustomButtonEdge: FC<EdgeProps> = (props) => {
   const {
     id,
     sourceX,
@@ -28,8 +27,13 @@ const ErrorEdge: FC<EdgeProps> = (props) => {
     targetX,
     targetY,
     targetPosition,
-    borderRadius: 16,
+    borderRadius: 8,
   });
+
+  const onEdgeClick = (evt, id) => {
+    evt.stopPropagation();
+    alert(`remove ${id}`);
+  };
 
   return (
     <>
@@ -43,22 +47,21 @@ const ErrorEdge: FC<EdgeProps> = (props) => {
       />
       <EdgeLabelRenderer>
         <div
-          className="errorEdge"
           style={{
             position: "absolute",
-            transform: `translate(-50%, -100%) translate(${targetX}px,${targetY}px)`,
+            transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
             fontSize: 12,
-            // everything inside EdgeLabelRenderer has no pointer events by default
-            // if you have an interactive element, set pointer-events: all
             pointerEvents: "all",
-            paddingBottom: "10px",
           }}
+          className="nodrag nopan"
         >
-          <img src={Error} />
+          <div className="addBtn" onClick={(event) => onEdgeClick(event, id)}>
+            +
+          </div>
         </div>
       </EdgeLabelRenderer>
     </>
   );
 };
 
-export default ErrorEdge;
+export default CustomButtonEdge;

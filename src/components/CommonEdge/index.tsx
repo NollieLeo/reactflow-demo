@@ -1,17 +1,8 @@
 import { FC } from "react";
-import {
-  EdgeProps,
-  getBezierPath,
-  BaseEdge,
-  EdgeLabelRenderer,
-  getSmoothStepPath,
-  ConnectionLineComponent,
-} from "reactflow";
-import CustomEdgeWrapper from "../customEdgeWrapper";
-import { Button } from "antd";
+import { EdgeProps, BaseEdge, getSmoothStepPath } from "reactflow";
 import "./index.scss";
 
-const CustomButtonEdge: FC<EdgeProps> = (props) => {
+const CustomCommonEdge: FC<EdgeProps> = (props) => {
   const {
     id,
     sourceX,
@@ -31,13 +22,8 @@ const CustomButtonEdge: FC<EdgeProps> = (props) => {
     targetX,
     targetY,
     targetPosition,
-    borderRadius: 8,
+    borderRadius: 16,
   });
-
-  const onEdgeClick = (evt, id) => {
-    evt.stopPropagation();
-    alert(`remove ${id}`);
-  };
 
   return (
     <>
@@ -49,23 +35,24 @@ const CustomButtonEdge: FC<EdgeProps> = (props) => {
         path={edgePath}
         markerEnd={markerEnd}
       />
-      <EdgeLabelRenderer>
+      {/* <EdgeLabelRenderer>
         <div
+          className="errorEdge"
           style={{
             position: "absolute",
-            transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
+            transform: `translate(-50%, -100%) translate(${targetX}px,${targetY}px)`,
             fontSize: 12,
+            // everything inside EdgeLabelRenderer has no pointer events by default
+            // if you have an interactive element, set pointer-events: all
             pointerEvents: "all",
+            paddingBottom: "10px",
           }}
-          className="nodrag nopan"
         >
-          <div className="addBtn" onClick={(event) => onEdgeClick(event, id)}>
-            +
-          </div>
+          <img src={Error} />
         </div>
-      </EdgeLabelRenderer>
+      </EdgeLabelRenderer> */}
     </>
   );
 };
 
-export default CustomButtonEdge;
+export default CustomCommonEdge;

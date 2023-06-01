@@ -1,7 +1,7 @@
 import { NodeProps, Position } from "reactflow";
 import CustomNodeWrapper from "../customNodeWrapper";
 import ActionsMenu from "../actionsMenu";
-import CustomAddBtn from "../customAddBtn";
+import CustomAddBtn from "../AddBtn";
 import { Divider, Image, MenuProps } from "antd";
 import Thunder from "@/assets/thunder.svg";
 import NodeOptionMenu from "../nodeOptionMenu";
@@ -39,7 +39,11 @@ const CustomBatchNode = (props: NodeProps<CustomBatchNodeType["data"]>) => {
           <div className="customBatchNode-item-top">
             <Image src={Thunder} preview={false} />
             <span className="customBatchNode-item-name">{data}</span>
-            <NodeOptionMenu onSelectItem={() => {}} />
+            <NodeOptionMenu
+              onSelectItem={() => {
+                console.log("1111");
+              }}
+            />
           </div>
           <div className="customBatchNode-item-bottom">
             Content word count exceeds ma...

@@ -3,12 +3,12 @@ import { NodeProps } from "reactflow";
 import { NodeCustomEnum } from "../types/customNodes";
 import { BasicNodeType } from "@/types";
 
-import CustomStartNode from "../components/customStartNode";
-import CustomProcessNode from "@/components/customProcessNode";
-import CustomDecisionNode from "@/components/customDecisionNode";
-import CustomEmptyNode from "@/components/customEmptyNode";
-import CustomBatchNode from "@/components/customBatchNode";
-import CustomGroupNode from "@/components/customGroupNode";
+import CustomStartNode from "../components/StartNode";
+import CustomProcessNode from "@/components/ProcessNode";
+import CustomDecisionNode from "@/components/DecisionNode";
+import CustomEmptyNode from "@/components/EmptyNode";
+import CustomBatchNode from "@/components/BatchNode";
+import CustomGroupNode from "@/components/GroupNode";
 
 
 export const BASIC_NODE_TYPE_DATA: Partial<BasicNodeType> = {

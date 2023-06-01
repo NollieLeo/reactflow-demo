@@ -1,10 +1,10 @@
 import { CSSProperties, FC, ReactNode } from "react";
-import { Handle, NodeProps, Position, getOutgoers } from "reactflow";
+import { Handle, NodeProps, Position } from "reactflow";
 
 import classnames from "classnames";
 
 import "./index.scss";
-import CustomAddBtn from "../customAddBtn";
+import CustomAddBtn from "../AddBtn";
 import { map } from "lodash-es";
 import ActionsMenu from "../actionsMenu";
 import { MenuProps } from "antd";
@@ -88,7 +88,7 @@ const CustomNodeWrapper: FC<CustomWrapper> = (props) => {
         : "target";
 
       const cls = classnames("customHandle", {
-        hidden: hasOutgoers(id) || value === Position.Top,
+        hidden: !hasOutgoers(id) || value === Position.Top,
       });
       return (
         <Handle
