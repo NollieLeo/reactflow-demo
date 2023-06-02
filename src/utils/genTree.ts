@@ -6,7 +6,6 @@ import MindmapLayouts from 'mindmap-layouts';
 type TreeNode = {
     originData?: BasicNodeType,
     id: BasicEdgeType['id'],
-    name: BasicEdgeType['id'],
     children: TreeNode[]
 }
 
@@ -36,7 +35,6 @@ class LayoutTree {
             nodeMap[id] = !nodeMap[id] ? {
                 originData: node,
                 id,
-                name: id,
                 children: []
             } : { ...nodeMap[id], originData: node };
 
@@ -48,7 +46,6 @@ class LayoutTree {
                 if (!nodeMap[parentId]) {
                     nodeMap[parentId] = {
                         id: parentId,
-                        name: parentId,
                         children: [],
                         originData: parentNode
                     }
@@ -74,6 +71,7 @@ class LayoutTree {
         const rootNode = layout.doLayout()
 
         this.root = rootNode;
+        console.log(this.root)
         this.flatternTree = this.flattern();
 
         return [rootNode, this.flatternTree]
